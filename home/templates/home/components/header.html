@@ -1,0 +1,30 @@
+{% load static %}
+
+<div class="site-header">
+  <div class="site-header-item">
+    <a class="site-header-brand" href="{% url 'home' %}">
+        <img src="{% static 'home/logo.png' %}">
+      <span>Hometer</span>
+    </a>
+  </div>
+  {% if user.is_authenticated %}
+<div class="site-header-item">
+    <a href="{% url 'dashboard' %}">
+      <span>{{ user.username }}</span>
+    </a>
+  </div>
+  <div class="site-header-item">
+    <a href="{% url 'password_change' %}">
+      <span>เปลี่ยนรหัสผ่าน</span>
+    </a>
+  </div>
+<div class="site-header-item">
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">
+          <span>ออกจากระบบ</span>
+        </button>
+      </form>
+  </div>
+{% endif %}
+</div>

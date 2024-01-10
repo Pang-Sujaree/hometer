@@ -1,0 +1,18 @@
+{% extends 'home/components/base.html' %}
+{% load static %}
+
+{% block site_title %}ตั้งค่า ThingSpeak{% endblock %}
+
+{% block content %}
+<section class="content-section">
+    <div class="content-container">
+        <h4 class="content-title">กรุณากรอกข้อมูล</h4>
+        <p>กรอกข้อมูลเพื่อเชื่อมต่อ ThingSpeak ก่อนเข้าใช้งานหน้า dashboard</p>
+        <form method="post" action="{% url 'api' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="button button-primary" type="submit">บันทึกข้อมูล</button>
+    </div>
+</form>
+
+{% endblock %}

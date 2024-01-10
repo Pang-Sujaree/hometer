@@ -1,0 +1,57 @@
+{% extends 'home/components/base.html' %}
+{% load static %}
+{% block site_title %}หน้าหลัก{% endblock %}
+
+{% block content %}
+<section class="home-landing">
+        <h1 class="home-landing-text">HOMETER</h1>
+        <h5>ระบบตรวจสอบการใช้พลังงานไฟฟ้าด้วย IOT</h5>
+        {% if user.is_authenticated %}
+        <p>กดปุ่ม <b>DASHBOARD</b> เพื่อเริ่มใช้งาน</p>
+        <a class="button button-primary" href="{% url 'dashboard' %}" role="button">Dashboard</a>
+        {% else %}
+        <p>กดปุ่ม เข้าสู่ระบบ เพื่อเริ่มใช้งาน</p>
+        <a class="button button-primary" href="{% url 'login' %}" role="button">เข้าสู่ระบบ</a>
+        {% endif %}
+</section>    
+{% if user.is_authenticated %}
+<div class="column-3 project-1">
+        <h2>STEP 1: สมัครสมาชิก</h2>
+        <p class="column-text">ยินดีด้วย คุณ {{ user.username }} ได้ทำการสมัครสมาชิกเรียบร้อยแล้ว
+        <center><img src="{% static 'home/user.png' %}" alt="" width="80" height="80"></center>
+        </p>
+        
+</div>
+<div class="column-3 project-2">
+        <h2>STEP 2: เชื่อมต่อข้อมูลบนอุปกรณ์</h2>
+        <p class="column-text">ตั้งค่าข้อมูลการเชื่อมต่อในอุปกรณ์ กำหนดชื่อ wifi-password สำหรับอุปกรณ์ของคุณ</p>
+        <center><br><a class="button button-primary:hover" href="http://192.168.4.1/" role="button">ตั้งค่าอุปกรณ์</a></center>
+</div>
+
+<div class="column-3 project-3">
+        <h2>STEP 3: เข้าใช้งาน Dashboard</h2>
+        <p class="column-text">สามารถเข้าเว็บเพื่อตรวจสอบการใช้พลังงานไฟฟ้าได้</p>
+        <center><img src="{% static 'home/dashboard.png' %}" alt="" width="80" height="80"></center>
+</div>
+
+{% else %}
+<div class="column-3 project-1">
+        <h2>STEP 1: สมัครสมาชิก</h2>
+        <p class="column-text">สมัครสมาชิกบนเว็บด้วย username และ password
+        <br><br><a class="button button-primary:hover" href="{% url 'signup' %}" role="button">สมัครสมาชิก</a>
+        </p>
+        
+</div>
+<div class="column-3 project-2">
+        <h2>STEP 2: เชื่อมต่อข้อมูลบนอุปกรณ์</h2>
+        <p class="column-text">ตั้งค่าข้อมูลการเชื่อมต่อในอุปกรณ์ กำหนดชื่อ wifi-password สำหรับอุปกรณ์ของคุณ</p>
+        <center><img src="{% static 'home/wifi.png' %}" alt="" width="80" height="80"></center>
+
+</div>
+<div class="column-3 project-3">
+        <h2>STEP 3: เข้าใช้งาน Dashboard</h2>
+        <p class="column-text">สามารถเข้าเว็บเพื่อตรวจสอบการใช้พลังงานไฟฟ้าได้</p>
+        <center><img src="{% static 'home/dashboard.png' %}" alt="" width="80" height="80"></center>
+</div>
+{% endif %}
+{% endblock %}

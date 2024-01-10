@@ -1,0 +1,311 @@
+{% extends 'home/components/base.html' %}
+{% load static %}
+{% block site_title %}หน้าหลัก{% endblock %}
+
+{% block content %}
+<center><h4 class="content-title"><br>Dashboard ตรวจสอบการใช้ไฟฟ้ารายวันของคุณ {{ user.username }}</h4>
+<p id="dateDisplay"></p></center>
+<div class="main">
+    <div class="card">
+        <div class="card-body">
+            <h5>แรงดันไฟฟ้า (Volts)</h5>
+            <canvas id="voltChart" width="200" height="100"></canvas>
+    </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="card-header"> 
+            <h5>กระแสไฟฟ้า (Amp)</h5>
+         </div>
+    <canvas id="currChart" width="200" height="100"></canvas>
+</div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+      <div class="card-header"> 
+        <br><br><center><h4><i class="fa-solid fa-sack-dollar fa-2xl"></i>  คำนวณค่าไฟฟ้า</h4></center>
+     </div>
+      <br><center><p style="display: inline-block;">ใช้พลังงานไฟฟ้าไปแล้วทั้งหมด<h6 id="latestEnergyDisplay" style="display: inline;">0</h6> หน่วย</p>
+        <p style="display: inline-block;">คิดเป็นเงิน&nbsp; <h4 id="billDisplay"style="display: inline-block;"> </h4></p></center>
+      <div class="card-body-2">
+        
+     </div>
+    </div>
+  </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="card-header"> 
+            <h5>กำลังไฟฟ้า (W)</h5>
+            <p id="latestPowerDisplay"></p>
+         </div>
+    <canvas id="powerChart" width="400" height="200"></canvas>
+    </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="card-header"> 
+            <h5>เปรียบเทียบพลังงานไฟฟ้าที่ใช้ รายวัน</h5>
+         </div>
+         <br><canvas id="energyBarChart" width="400" height="400"></canvas>
+        </div>
+    </div>
+</div>
+    
+    <script>
+        var ctx = document.getElementById('voltChart').getContext('2d');
+
+        var chart1 = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [], 
+                datasets: [
+                    {
+                        label: 'Voltage',
+                        borderColor: 'red',
+                        borderWidth: 1,
+                        fill: true,
+                        backgroundColor: 'pink',
+                        data: [] 
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    x: {
+                        display: false
+                    },
+                    y:{
+                      grid: {
+                        display: false
+                      }
+                    }
+                }
+            }
+        });
+        var ctx2 = document.getElementById('currChart').getContext('2d');
+        var chart2 = new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: [], 
+                datasets: [
+                    {
+                        label: 'Current',
+                        borderColor: 'rgb(54, 162, 235)',
+                        borderWidth: 1,
+                        fill: true,
+                        backgroundColor: 'rgb(204, 229, 255)',
+                        data: [] 
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    x: {
+                        display: false
+                    },
+                    y:{
+                      grid: {
+                        display: false
+                      }
+                    }
+                }
+            }
+        });
+        var ctx3 = document.getElementById('powerChart').getContext('2d');
+        var chart3 = new Chart(ctx3, {
+            type: 'line',
+            data: {
+                labels: [], 
+                datasets: [
+                    {
+                        label: 'Power',
+                        borderColor: 'rgb(255, 128, 0)',
+                        borderWidth: 3,
+                        backgroundColor: 'rgb(255, 204, 153)',
+                        fill: true,
+                        data: [] 
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    x: [{
+                        type: 'linear',
+                        position: 'bottom'
+                    }]
+                }
+            }
+        });
+        var ctx4 = document.getElementById('energyBarChart').getContext('2d');
+        var chart4 = new Chart(ctx4, {
+          type: 'bar',
+          data: {
+          labels: [],
+          datasets: [
+            {
+                label: 'Energy',
+                backgroundColor: 'rgb(204, 255, 153)',
+                borderColor: 'rgb(153, 255, 51)',
+                borderWidth: 2,
+                data: []
+            }
+        ]
+    },
+    options: {
+        scales: {
+            x: {
+                type: 'category',
+            },
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+function updateChart(chart,timestamp, power, energy) {
+    const localTimestamp = new Date(timestamp).toLocaleString('en-US', {
+        timeZone: 'Asia/Bangkok',
+        hour12: false
+    });
+    const timePart = localTimestamp.split(', ')[1];
+
+    const existingIndex = chart.data.labels.indexOf(timePart);
+
+    if (existingIndex !== -1) {
+        //เขียนทับ data ที่ timestamp ตรงกัน
+        chart.data.datasets[0].data[existingIndex] = parseFloat(power);
+    } else {
+        //เพิ่ม data ใหม่
+        chart.data.labels.push(timePart);
+        chart.data.datasets[0].data.push(parseFloat(power));
+
+        var maxDataPoints = 10;
+        if (chart.data.labels.length > maxDataPoints) {
+            chart.data.labels.shift();
+            chart.data.datasets[0].data.shift();
+        }
+    }
+
+    chart.update();
+
+    document.getElementById('dateDisplay').textContent = 'ข้อมูลล่าสุด: ' + localTimestamp;
+    document.getElementById('latestPowerDisplay').textContent = `ปัจจุบันใช้กำลังไฟฟ้าอยู่ที่ ${power} วัตต์ต่อนาที`;
+    document.getElementById('latestEnergyDisplay').textContent = ` ${energy}`; 
+
+}
+
+function fetchInitialDataAndShowChart(chart,fieldIndex) {
+    fetch('https://api.thingspeak.com/channels/2386100/feeds.json?api_key=88BY27BKEILVNLU9&results=10')
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.feeds && data.feeds.length > 0) {
+                data.feeds.forEach(entry => {
+                    updateChart(chart, entry.created_at, entry['field'+fieldIndex]);  
+                });
+
+                setInterval(fetchRealTimeDataAndUpdateChart(chart,fieldIndex), 5000);
+            }
+        })
+        .catch(error => console.error('Error fetching initial data:', error));
+}
+
+function fetchRealTimeDataAndUpdateChart(chart,fieldIndex) {
+    fetch('https://api.thingspeak.com/channels/2386100/feeds.json?api_key=88BY27BKEILVNLU9&results=1')
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.feeds && data.feeds.length > 0) {
+                // เพิ่มข้อมูลล่าสุด
+                const latestEntry = data.feeds[0];
+                updateChart(chart, latestEntry.created_at, latestEntry['field'+fieldIndex], latestEntry['field4']);
+            }
+        })
+        .catch(error => console.error('Error fetching real-time data:', error));
+}
+
+function fetchAndShowDailyEnergyData(chart) {
+    fetch('https://api.thingspeak.com/channels/2382430/feeds.json?api_key=LK64S93O4ATUW3EG&results=2880')
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.feeds && data.feeds.length > 0) {
+                const groupedData = groupDataByDay(data.feeds.filter(entry => !entry.created_at.startsWith('1703')));
+
+                const labels = Object.keys(groupedData).slice(-7);
+                const energyValues = calculateEnergyDifferences(labels, groupedData);
+
+                chart.data.labels = labels;
+                chart.data.datasets[0].data = energyValues;
+
+                chart.update();
+            }
+        })
+        .catch(error => console.error('Error fetching energy data:', error));
+}
+
+function calculateEnergyDifferences(labels, groupedData) {
+    const energyDifferences = [];
+    let prevEnergyValue = null;
+
+    for (const date of labels) {
+        const currentEnergyValue = groupedData[date][groupedData[date].length - 1].field4;
+
+        if (prevEnergyValue !== null) {
+            const difference = currentEnergyValue - prevEnergyValue;
+            energyDifferences.push(difference);
+        }
+
+        prevEnergyValue = currentEnergyValue;
+    }
+
+    return energyDifferences;
+}
+
+function groupDataByDay(data) {
+    return data.reduce((result, entry) => {
+        const date = entry.created_at.split('T')[0];
+        result[date] = result[date] || [];
+        result[date].push(entry);
+        return result;
+    }, {});
+}
+
+function fetchAndCalculateBill() {
+    fetch('https://api.thingspeak.com/channels/2386100/feeds.json?api_key=88BY27BKEILVNLU9&results=1')
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.feeds && data.feeds.length > 0) {
+                const latestEntry = data.feeds[0];
+                const energyCon = parseFloat(latestEntry.field4);
+
+                let bill;
+                if(energyCon<=150){
+                    bill = (energyCon * 3.24) + (energyCon * 0.20) + 24.62 ;
+                }
+                else{
+                    bill = (150 * 3.24) + ((energyCon-150) * 4.22) + (energyCon * 0.20) + 24.62 ;
+                }
+
+                const sumBill = (parseFloat(bill) * 7) / 100 + parseFloat(bill);
+                const billDisplay = document.getElementById('billDisplay');
+                billDisplay.textContent = `${sumBill.toFixed(2)} บาท`;
+            }
+        })
+        .catch(error => console.error('Error fetching energy data:', error));
+}
+
+    
+fetchInitialDataAndShowChart(chart1,1);
+fetchInitialDataAndShowChart(chart2,2);
+fetchInitialDataAndShowChart(chart3,3);
+fetchAndShowDailyEnergyData(chart4);
+
+setInterval(function () {
+    fetchRealTimeDataAndUpdateChart(chart1, 1);
+    fetchRealTimeDataAndUpdateChart(chart2, 2);
+    fetchRealTimeDataAndUpdateChart(chart3, 3);
+    fetchAndShowDailyEnergyData(chart4);
+    fetchAndCalculateBill();
+}, 5000); 
+</script>
+
+{% endblock %}

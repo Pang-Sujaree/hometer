@@ -1,0 +1,32 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hometer | {% block site_title %}{% endblock %}</title>
+  <link rel="icon" type="image/x-icon" href="{% static 'home/favicon.ico' %}">
+    <link rel="stylesheet" href="{% static 'home/main.css' %}">
+    <link rel="stylesheet" href="{% static 'home/normalize.css' %}">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.min.js" integrity="sha512-L0Shl7nXXzIlBSUUPpxrokqq4ojqgZFQczTYlGjzONGTDAcLremjwaWv5A+EDLnxhQzY5xUZPWLOLqYRkY0Cbw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="{% static 'home/chartjs-adapter-date-fns.min.js' %}"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+
+
+</head>
+
+<body>
+
+  {% include 'home/components/header.html' %}
+  {% block content %}{% endblock %}
+  {% include 'home/components/footer.html' %}
+</body>
+  
+
+</html>
