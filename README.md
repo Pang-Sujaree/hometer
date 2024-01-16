@@ -14,9 +14,11 @@ code .
 3.  แก้ไขการตั้งค่าส่วน Database ในไฟล์ hometer_prj/settings.py ในสอดคล้องกับข้อมูลของคุณ แล้วบันทึกไฟล์
 
 4. เปิด VSCode terminal
-5. ติดตั้ง Packages ของโปรเจ็คจาก Pipfile.lock
+5. ติดตั้ง Packages ของโปรเจ็คจาก Pipfile.lock และ requirements.txt
 ```bash
 pipenv install
+
+pip install -r requirements.txt
 ```
 6. Activate pipenv environment
 ```bash
