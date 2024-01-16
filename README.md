@@ -14,25 +14,23 @@ code .
 3.  แก้ไขการตั้งค่าส่วน Database ในไฟล์ hometer_prj/settings.py ในสอดคล้องกับข้อมูลของคุณ แล้วบันทึกไฟล์
 
 4. เปิด VSCode terminal
-5. ติดตั้ง Packages ของโปรเจ็คจาก Pipfile.lock และ requirements.txt
+5. Activate pipenv environment และติดตั้ง Packages ของโปรเจ็ค
 ```bash
 pipenv install
 
+pipenv shell
+
 pip install -r requirements.txt
 ```
-6. Activate pipenv environment
-```bash
-pipenv shell
-```
-7. Database migrations
+6. Database migrations
 ```bash
 python manage.py migrate
 ```
-8. สร้าง Super User (ถ้าต้องการ)
+7. สร้าง Super User (ถ้าต้องการ)
 ```bash
 python manage.py createsuperuser
 ```
-9. เรียกใช้เว็บโปรเจ็ค
+8. เรียกใช้เว็บโปรเจ็ค
 ```bash
 python manage.py runserver
 ``` 
