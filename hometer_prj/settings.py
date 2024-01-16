@@ -42,10 +42,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "home.apps.HomeConfig",
     "dashboard.apps.DashboardConfig",
-    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
-    'channels'
 ]
 
 MIDDLEWARE = [
